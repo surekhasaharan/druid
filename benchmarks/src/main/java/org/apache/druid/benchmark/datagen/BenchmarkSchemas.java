@@ -66,6 +66,15 @@ public class BenchmarkSchemas
             Arrays.asList("Apple", "Orange", "Xylophone", "Corundum", null),
             Arrays.asList(0.2, 0.25, 0.15, 0.10, 0.3)
         ),
+        BenchmarkColumnSchema.makeEnumerated(
+            "dimMultivalEnumerated3",
+            ValueType.STRING,
+            false,
+            3,
+            null,
+            Arrays.asList("key-1", "key-5", "key-20", "key-50", "key-2100"),
+            Arrays.asList(0.2, 0.25, 0.15, 0.10, 0.3)
+        ),
         BenchmarkColumnSchema.makeSequential("dimMultivalSequentialWithNulls", ValueType.STRING, false, 8, 0.15, 1, 11),
         BenchmarkColumnSchema.makeSequential("dimHyperUnique", ValueType.STRING, false, 1, null, 0, 100000),
         BenchmarkColumnSchema.makeSequential("dimNull", ValueType.STRING, false, 1, 1.0, 0, 1),
