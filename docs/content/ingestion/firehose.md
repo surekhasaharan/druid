@@ -1,6 +1,26 @@
 ---
 layout: doc_page
+title: "Druid Firehoses"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Druid Firehoses
 
@@ -90,7 +110,10 @@ A sample ingest firehose spec is shown below -
 #### SqlFirehose
 
 SqlFirehoseFactory can be used to ingest events residing in RDBMS. The database connection information is provided as part of the ingestion spec. For each query, the results are fetched locally and indexed. If there are multiple queries from which data needs to be indexed, queries are prefetched in the background upto `maxFetchCapacityBytes` bytes.
-An example is shown below:
+
+Requires one of the following extensions:
+ * [MySQL Metadata Store](../ingestion/mysql.html).
+ * [PostgreSQL Metadata Store](../ingestion/postgresql.html).
 
 ```json
 {
@@ -98,26 +121,33 @@ An example is shown below:
     "database": {
         "type": "mysql",
         "connectorConfig" : {
-        "connectURI" : "jdbc:mysql://host:port/schema",
-        "user" : "user",
-        "password" : "password"
+            "connectURI" : "jdbc:mysql://host:port/schema",
+            "user" : "user",
+            "password" : "password"
         }
      },
     "sqls" : ["SELECT * FROM table1", "SELECT * FROM table2"]
 }
 ```
 
-
 |property|description|default|required?|
 |--------|-----------|-------|---------|
 |type|This should be "sql".||Yes|
-|database|Specifies the database connection details.`type` should specify the database type and `connectorConfig` should specify the database connection properties via `connectURI`, `user` and `password`||Yes|
+|database|Specifies the database connection details.||Yes|
 |maxCacheCapacityBytes|Maximum size of the cache space in bytes. 0 means disabling cache. Cached files are not removed until the ingestion task completes.|1073741824|No|
 |maxFetchCapacityBytes|Maximum size of the fetch space in bytes. 0 means disabling prefetch. Prefetched files are removed immediately once they are read.|1073741824|No|
 |prefetchTriggerBytes|Threshold to trigger prefetching SQL result objects.|maxFetchCapacityBytes / 2|No|
 |fetchTimeout|Timeout for fetching the result set.|60000|No|
 |foldCase|Toggle case folding of database column names. This may be enabled in cases where the database returns case insensitive column names in query results.|false|No|
 |sqls|List of SQL queries where each SQL query would retrieve the data to be indexed.||Yes|
+
+#### Database
+
+|property|description|default|required?|
+|--------|-----------|-------|---------|
+|type|The type of database to query. Valid values are `mysql` and `postgresql`_||Yes|
+|connectorConfig|specify the database connection properties via `connectURI`, `user` and `password`||Yes|
+
 
 ### CombiningFirehose
 
@@ -192,4 +222,3 @@ An example is shown below:
 |type|This should be "timed"|yes|
 |shutoffTime|time at which the firehose should shut down, in ISO8601 format|yes|
 |delegate|firehose to use|yes|
-

@@ -1,6 +1,27 @@
 ---
 layout: doc_page
+title: "Ingestion Reports"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 # Ingestion Reports
 
 ## Completion Report
@@ -69,7 +90,7 @@ The `errorMsg` field shows a message describing the error that caused a task to 
 
 The non-parallel [Native Batch Task](../native_tasks.md), the Hadoop batch task, and the tasks created by the Kafka Indexing Service support retrieval of row stats while the task is running.
 
-The live report can be accessed with a GET to the following URL on a peon running a task:
+The live report can be accessed with a GET to the following URL on a Peon running a task:
 
 ```
 http://<middlemanager-host>:<worker-port>/druid/worker/v1/chat/<task-id>/rowStats
@@ -122,7 +143,7 @@ http://<OVERLORD-HOST>:<OVERLORD-PORT>/druid/indexer/v1/supervisor/<supervisor-i
 
 ### Unparseable Events
 
-Current lists of unparseable events can be retrieved from a running task with a GET to the following peon API:
+Current lists of unparseable events can be retrieved from a running task with a GET to the following Peon API:
 
 ```
 http://<middlemanager-host>:<worker-port>/druid/worker/v1/chat/<task-id>/unparseableEvents

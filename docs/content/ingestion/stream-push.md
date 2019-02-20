@@ -1,8 +1,28 @@
 ---
 layout: doc_page
+title: "Stream Push"
 ---
 
-## Stream Push
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+# Stream Push
 
 Druid can connect to any streaming data source through
 [Tranquility](https://github.com/druid-io/tranquility/blob/master/README.md), a package for pushing
@@ -21,8 +41,8 @@ time). Older messages will not be processed in real-time. Historical data is bes
 ### Server
 
 Druid can use [Tranquility Server](https://github.com/druid-io/tranquility/blob/master/docs/server.md), which
-lets you send data to Druid without developing a JVM app. You can run Tranquility server colocated with Druid middleManagers
-and historical processes.
+lets you send data to Druid without developing a JVM app. You can run Tranquility server colocated with Druid MiddleManagers
+and Historical processes.
 
 Tranquility server is started by issuing:
 
@@ -105,7 +125,7 @@ The windowPeriod is the slack time permitted for events. For example, a windowPe
 than ten minutes in the future, will be dropped.
 
 These are important configurations because they influence how long tasks will be alive for, and how
-long data stays in the realtime system before being handed off to the historical nodes. For example,
+long data stays in the realtime system before being handed off to the Historical nodes. For example,
 if your configuration has segmentGranularity "hour" and windowPeriod ten minutes, tasks will stay
 around listening for events for an hour and ten minutes. For this reason, to prevent excessive
 buildup of tasks, it is recommended that your windowPeriod be less than your segmentGranularity.
@@ -164,4 +184,3 @@ Tranquility documentation be found [here](https://github.com/druid-io/tranquilit
 Tranquility configuration can be found [here](https://github.com/druid-io/tranquility/blob/master/docs/configuration.md).
 
 Tranquility's tuningConfig can be found [here](http://static.druid.io/tranquility/api/latest/#com.metamx.tranquility.druid.DruidTuning). 
-

@@ -1,6 +1,26 @@
 ---
 layout: doc_page
+title: "Transforming Dimension Values"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Transforming Dimension Values
 
@@ -103,7 +123,7 @@ It is illegal to set `retainMissingValue = true` and also specify a `replaceMiss
 
 A property `optimize` can be supplied to allow optimization of lookup based extraction filter (by default `optimize = true`).
 
-The second kind where it is not possible to pass at query time due to their size, will be based on an external lookup table or resource that is already registered via configuration file or/and coordinator.
+The second kind where it is not possible to pass at query time due to their size, will be based on an external lookup table or resource that is already registered via configuration file or/and Coordinator.
 
 ```json
 {
@@ -355,7 +375,7 @@ A property of `injective` can override the lookup's own sense of whether or not 
 configuration.
 
 A property `optimize` can be supplied to allow optimization of lookup based extraction filter (by default `optimize = true`).
-The optimization layer will run on the broker and it will rewrite the extraction filter as clause of selector filters.
+The optimization layer will run on the Broker and it will rewrite the extraction filter as clause of selector filters.
 For instance the following filter
 
 ```json

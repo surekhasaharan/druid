@@ -1,8 +1,29 @@
 ---
 layout: doc_page
+title: "Scan query"
 ---
 
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 # Scan query
+
 Scan query returns raw Druid rows in streaming mode.
 
 ```json
@@ -157,7 +178,7 @@ The format of the result when resultFormat equals to `compactedList`:
 The biggest difference between select query and scan query is that, scan query doesn't retain all rows in memory before rows can be returned to client.  
 It will cause memory pressure if too many rows required by select query.  
 Scan query doesn't have this issue.  
-Scan query can return all rows without issuing another pagination query, which is extremely useful when query against historical or realtime node directly.
+Scan query can return all rows without issuing another pagination query, which is extremely useful when query against Historical or realtime node directly.
 
 ## Legacy mode
 

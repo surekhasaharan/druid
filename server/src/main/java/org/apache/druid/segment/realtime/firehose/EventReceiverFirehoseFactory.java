@@ -74,7 +74,6 @@ import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -138,8 +137,9 @@ public class EventReceiverFirehoseFactory implements FirehoseFactory<InputRowPar
     if (chatHandlerProvider.isPresent()) {
       log.info("Found chathandler of class[%s]", chatHandlerProvider.get().getClass().getName());
       chatHandlerProvider.get().register(serviceName, firehose);
-      if (serviceName.contains(":")) {
-        chatHandlerProvider.get().register(serviceName.replaceAll(".*:", ""), firehose); // rofl
+      int lastIndexOfColon = serviceName.lastIndexOf(':');
+      if (lastIndexOfColon > 0) {
+        chatHandlerProvider.get().register(serviceName.substring(lastIndexOfColon + 1), firehose);
       }
     } else {
       log.warn("No chathandler detected");
@@ -181,7 +181,7 @@ public class EventReceiverFirehoseFactory implements FirehoseFactory<InputRowPar
     private volatile boolean closed = false;
     private final AtomicLong bytesReceived = new AtomicLong(0);
     private final AtomicLong lastBufferAddFailMsgTime = new AtomicLong(0);
-    private final ConcurrentMap<String, Long> producerSequences = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long> producerSequences = new ConcurrentHashMap<>();
     private final Stopwatch idleWatch = Stopwatch.createUnstarted();
 
     public EventReceiverFirehose(InputRowParser<Map<String, Object>> parser)
@@ -486,11 +486,11 @@ public class EventReceiverFirehoseFactory implements FirehoseFactory<InputRowPar
         if (newSequence <= producerSequence) {
           return Optional.of(
               Response.ok(
-                responseMapper.writeValueAsString(
-                    ImmutableMap.of("eventCount", 0, "skipped", true)
-                ),
-                responseContentType
-            ).build()
+                  responseMapper.writeValueAsString(
+                      ImmutableMap.of("eventCount", 0, "skipped", true)
+                  ),
+                  responseContentType
+              ).build()
           );
         }
 

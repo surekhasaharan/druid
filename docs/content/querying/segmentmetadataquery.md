@@ -1,7 +1,29 @@
 ---
 layout: doc_page
+title: "Segment Metadata Queries"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 # Segment Metadata Queries
+
 Segment metadata queries return per-segment information about:
 
 * Cardinality of all columns in the segment
@@ -71,7 +93,7 @@ Only columns which are dimensions (ie, have type `STRING`) will have any cardina
 
 If an interval is not specified, the query will use a default interval that spans a configurable period before the end time of the most recent segment.
 
-The length of this default time period is set in the broker configuration via:
+The length of this default time period is set in the Broker configuration via:
   druid.query.segmentMetadata.defaultHistory
 
 ### toInclude
@@ -108,7 +130,7 @@ This is a list of properties that determines the amount of information returned 
 
 By default, the "cardinality", "interval", and "minmax" types will be used. If a property is not needed, omitting it from this list will result in a more efficient query.
 
-The default analysis types can be set in the broker configuration via:
+The default analysis types can be set in the Broker configuration via:
   `druid.query.segmentMetadata.defaultAnalysisTypes`
 
 Types of column analyses are described below:

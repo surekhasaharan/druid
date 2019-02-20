@@ -1,11 +1,34 @@
 ---
 layout: doc_page
+title: "Native Index Tasks"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 # Native Index Tasks
 
 Druid currently has two types of native batch indexing tasks, `index_parallel` which runs tasks
-in parallel on multiple middle manager nodes, and `index` which will run a single indexing task locally on a single
-middle manager.
+in parallel on multiple MiddleManager nodes, and `index` which will run a single indexing task locally on a single
+MiddleManager.
+
+Please check [Hadoop-based Batch Ingestion VS Native Batch Ingestion](./hadoop-vs-native-batch.html) for differences between native batch ingestion and Hadoop-based ingestion.
 
 Parallel Index Task
 --------------------------------
@@ -13,7 +36,7 @@ Parallel Index Task
 The Parallel Index Task is a task for parallel batch indexing. This task only uses Druid's resource and
 doesn't depend on other external systems like Hadoop. This task currently works in a single phase without shuffling intermediate
 data. `index_parallel` task is a supervisor task which basically generates multiple worker tasks and submits
-them to overlords. Each worker task reads input data and makes segments. Once they successfully generate segments for all
+them to Overlords. Each worker task reads input data and makes segments. Once they successfully generate segments for all
 input, they report the generated segment list to the supervisor task. The supervisor task periodically checks the worker
 task statuses. If one of them fails, it retries the failed task until the retrying number reaches the configured limit.
 If all worker tasks succeed, then it collects the reported list of generated segments and publishes those segments at once.
@@ -131,17 +154,17 @@ The tuningConfig is optional and default parameters will be used if no tuningCon
 |property|description|default|required?|
 |--------|-----------|-------|---------|
 |type|The task type, this should always be `index_parallel`.|none|yes|
-|targetPartitionSize|Used in sharding. Determines how many rows are in each segment.|5000000|no|
+|maxRowsPerSegment|Used in sharding. Determines how many rows are in each segment.|5000000|no|
 |maxRowsInMemory|Used in determining when intermediate persists to disk should occur. Normally user does not need to set this, but depending on the nature of data, if rows are short in terms of bytes, user may not want to store a million rows in memory and this value should be set.|1000000|no|
 |maxBytesInMemory|Used in determining when intermediate persists to disk should occur. Normally this is computed internally and user does not need to set it. This value represents number of bytes to aggregate in heap memory before persisting. This is based on a rough estimate of memory usage and not actual usage. The maximum heap memory usage for indexing is maxBytesInMemory * (2 + maxPendingPersists)|1/6 of max JVM memory|no|
 |maxTotalRows|Total number of rows in segments waiting for being pushed. Used in determining when intermediate pushing should occur.|20000000|no|
-|numShards|Directly specify the number of shards to create. If this is specified and 'intervals' is specified in the granularitySpec, the index task can skip the determine intervals/partitions pass through the data. numShards cannot be specified if targetPartitionSize is set.|null|no|
+|numShards|Directly specify the number of shards to create. If this is specified and 'intervals' is specified in the granularitySpec, the index task can skip the determine intervals/partitions pass through the data. numShards cannot be specified if maxRowsPerSegment is set.|null|no|
 |indexSpec|defines segment storage format options to be used at indexing time, see [IndexSpec](#indexspec)|null|no|
 |maxPendingPersists|Maximum number of persists that can be pending but not started. If this limit would be exceeded by a new intermediate persist, ingestion will block until the currently-running persist finishes. Maximum heap memory usage for indexing scales with maxRowsInMemory * (2 + maxPendingPersists).|0 (meaning one persist can be running concurrently with ingestion, and none can be queued up)|no|
 |forceExtendableShardSpecs|Forces use of extendable shardSpecs. Experimental feature intended for use with the [Kafka indexing service extension](../development/extensions-core/kafka-ingestion.html).|false|no|
 |reportParseExceptions|If true, exceptions encountered during parsing will be thrown and will halt ingestion; if false, unparseable rows and fields will be skipped.|false|no|
 |pushTimeout|Milliseconds to wait for pushing segments. It must be >= 0, where 0 means to wait forever.|0|no|
-|segmentWriteOutMediumFactory|Segment write-out medium to use when creating segments. See [Additional Peon Configuration: SegmentWriteOutMediumFactory](../configuration/index.html#segmentwriteoutmediumfactory) for explanation and available options.|Not specified, the value from `druid.peon.defaultSegmentWriteOutMediumFactory` is used|no|
+|segmentWriteOutMediumFactory|Segment write-out medium to use when creating segments. See [SegmentWriteOutMediumFactory](#segmentWriteOutMediumFactory).|Not specified, the value from `druid.peon.defaultSegmentWriteOutMediumFactory.type` is used|no|
 |maxNumSubTasks|Maximum number of tasks which can be run at the same time.|Integer.MAX_VALUE|no|
 |maxRetry|Maximum number of retries on task failures.|3|no|
 |taskStatusCheckPeriodMs|Polling period in milleseconds to check running task statuses.|1000|no|
@@ -316,7 +339,7 @@ An example of the result is
       },
       "tuningConfig": {
         "type": "index_parallel",
-        "targetPartitionSize": 5000000,
+        "maxRowsPerSegment": 5000000,
         "maxRowsInMemory": 1000000,
         "maxTotalRows": 20000000,
         "numShards": null,
@@ -433,7 +456,7 @@ The Local Index Task is designed to be used for smaller data sets. The task exec
     },
     "tuningConfig" : {
       "type" : "index",
-      "targetPartitionSize" : 5000000,
+      "maxRowsPerSegment" : 5000000,
       "maxRowsInMemory" : 1000000
     }
   }
@@ -470,19 +493,19 @@ The tuningConfig is optional and default parameters will be used if no tuningCon
 |property|description|default|required?|
 |--------|-----------|-------|---------|
 |type|The task type, this should always be "index".|none|yes|
-|targetPartitionSize|Used in sharding. Determines how many rows are in each segment.|5000000|no|
+|maxRowsPerSegment|Used in sharding. Determines how many rows are in each segment.|5000000|no|
 |maxRowsInMemory|Used in determining when intermediate persists to disk should occur. Normally user does not need to set this, but depending on the nature of data, if rows are short in terms of bytes, user may not want to store a million rows in memory and this value should be set.|1000000|no|
 |maxBytesInMemory|Used in determining when intermediate persists to disk should occur. Normally this is computed internally and user does not need to set it. This value represents number of bytes to aggregate in heap memory before persisting. This is based on a rough estimate of memory usage and not actual usage. The maximum heap memory usage for indexing is maxBytesInMemory * (2 + maxPendingPersists)|1/6 of max JVM memory|no|
 |maxTotalRows|Total number of rows in segments waiting for being pushed. Used in determining when intermediate pushing should occur.|20000000|no|
-|numShards|Directly specify the number of shards to create. If this is specified and 'intervals' is specified in the granularitySpec, the index task can skip the determine intervals/partitions pass through the data. numShards cannot be specified if targetPartitionSize is set.|null|no|
+|numShards|Directly specify the number of shards to create. If this is specified and 'intervals' is specified in the granularitySpec, the index task can skip the determine intervals/partitions pass through the data. numShards cannot be specified if maxRowsPerSegment is set.|null|no|
 |partitionDimensions|The dimensions to partition on. Leave blank to select all dimensions. Only used with `forceGuaranteedRollup` = true, will be ignored otherwise.|null|no|
 |indexSpec|defines segment storage format options to be used at indexing time, see [IndexSpec](#indexspec)|null|no|
 |maxPendingPersists|Maximum number of persists that can be pending but not started. If this limit would be exceeded by a new intermediate persist, ingestion will block until the currently-running persist finishes. Maximum heap memory usage for indexing scales with maxRowsInMemory * (2 + maxPendingPersists).|0 (meaning one persist can be running concurrently with ingestion, and none can be queued up)|no|
 |forceExtendableShardSpecs|Forces use of extendable shardSpecs. Experimental feature intended for use with the [Kafka indexing service extension](../development/extensions-core/kafka-ingestion.html).|false|no|
-|forceGuaranteedRollup|Forces guaranteeing the [perfect rollup](../ingestion/index.html#roll-up-modes). The perfect rollup optimizes the total size of generated segments and querying time while indexing time will be increased. This flag cannot be used with either `appendToExisting` of IOConfig or `forceExtendableShardSpecs`. For more details, see the below __Segment pushing modes__ section.|false|no|
+|forceGuaranteedRollup|Forces guaranteeing the [perfect rollup](../ingestion/index.html#roll-up-modes). The perfect rollup optimizes the total size of generated segments and querying time while indexing time will be increased. If this is set to true, the index task will read the entire input data twice: one for finding the optimal number of partitions per time chunk and one for generating segments. Note that the result segments would be hash-partitioned. You can set `forceExtendableShardSpecs` if you plan to append more data to the same time range in the future. This flag cannot be used with `appendToExisting` of IOConfig. For more details, see the below __Segment pushing modes__ section.|false|no|
 |reportParseExceptions|DEPRECATED. If true, exceptions encountered during parsing will be thrown and will halt ingestion; if false, unparseable rows and fields will be skipped. Setting `reportParseExceptions` to true will override existing configurations for `maxParseExceptions` and `maxSavedParseExceptions`, setting `maxParseExceptions` to 0 and limiting `maxSavedParseExceptions` to no more than 1.|false|no|
 |pushTimeout|Milliseconds to wait for pushing segments. It must be >= 0, where 0 means to wait forever.|0|no|
-|segmentWriteOutMediumFactory|Segment write-out medium to use when creating segments. See [Additional Peon Configuration: SegmentWriteOutMediumFactory](../configuration/index.html#segmentwriteoutmediumfactory) for explanation and available options.|Not specified, the value from `druid.peon.defaultSegmentWriteOutMediumFactory` is used|no|
+|segmentWriteOutMediumFactory|Segment write-out medium to use when creating segments. See [SegmentWriteOutMediumFactory](#segmentWriteOutMediumFactory).|Not specified, the value from `druid.peon.defaultSegmentWriteOutMediumFactory.type` is used|no|
 |logParseExceptions|If true, log an error message when a parsing exception occurs, containing information about the row where the error occurred.|false|no|
 |maxParseExceptions|The maximum number of parse exceptions that can occur before the task halts ingestion and fails. Overridden if `reportParseExceptions` is set.|unlimited|no|
 |maxSavedParseExceptions|When a parse exception occurs, Druid can keep track of the most recent parse exceptions. "maxSavedParseExceptions" limits how many exception instances will be saved. These saved exceptions will be made available after the task finishes in the [task completion report](../ingestion/reports.html). Overridden if `reportParseExceptions` is set.|0|no|
@@ -514,6 +537,12 @@ For Roaring bitmaps:
 |type|String|Must be `roaring`.|yes|
 |compressRunOnSerialization|Boolean|Use a run-length encoding where it is estimated as more space efficient.|no (default == `true`)|
 
+#### SegmentWriteOutMediumFactory
+
+|Field|Type|Description|Required|
+|-----|----|-----------|--------|
+|type|String|See [Additional Peon Configuration: SegmentWriteOutMediumFactory](../configuration/index.html#segmentwriteoutmediumfactory) for explanation and available options.|yes|
+
 #### Segment pushing modes
 
 While ingesting data using the Index task, it creates segments from the input data and pushes them. For segment pushing,
@@ -532,5 +561,3 @@ continues to ingest remaining data.
 
 To enable bulk pushing mode, `forceGuaranteedRollup` should be set in the TuningConfig. Note that this option cannot
 be used with either `forceExtendableShardSpecs` of TuningConfig or `appendToExisting` of IOConfig.
-
-

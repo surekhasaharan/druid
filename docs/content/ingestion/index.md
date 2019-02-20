@@ -1,10 +1,32 @@
 ---
 layout: doc_page
+title: "Ingestion"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Ingestion
 
 ## Overview
+
+<a name="datasources" />
 
 ### Datasources and segments
 
@@ -35,6 +57,8 @@ size, and its location on deep storage. These entries are what the Coordinator u
 available on the cluster.
 
 For details on the segment file format, please see [segment files](../design/segments.html).
+
+For details on modeling your data in Druid, see [schema design](schema-design.html).
 
 #### Segment identifiers
 
@@ -154,7 +178,7 @@ the best one for your situation.
 |Method|How it works|Can append and overwrite?|Can handle late data?|Exactly-once ingestion?|Real-time queries?|
 |------|------------|-------------------------|---------------------|-----------------------|------------------|
 |[Native batch](native_tasks.html)|Druid loads data directly from S3, HTTP, NFS, or other networked storage.|Append or overwrite|Yes|Yes|No|
-|[Hadoop](hadoop.html)|Druid launches Hadoop Map/Reduce jobs to load data files.|Append or overwrite|Yes|Yes|No|
+|[Hadoop](hadoop.html)|Druid launches Hadoop Map/Reduce jobs to load data files.|Overwrite|Yes|Yes|No|
 |[Kafka indexing service](../development/extensions-core/kafka-ingestion.html)|Druid reads directly from Kafka.|Append only|Yes|Yes|Yes|
 |[Tranquility](stream-push.html)|You use Tranquility, a client side library, to push individual records into Druid.|Append only|No - late data is dropped|No - may drop or duplicate data|Yes|
 
@@ -167,7 +191,7 @@ a _time chunk_, and each time chunk contains one or more [segments](../design/se
 particular time chunk may be partitioned further using options that vary based on the ingestion method you have chosen.
 
  * With [Hadoop](hadoop.html) you can do hash- or range-based partitioning on one or more columns.
- * With [Native batch](native_tasks.html) you can partition on a hash of all dimension columns. This is useful when
+ * With [Native batch](native_tasks.html) you can partition on a hash of dimension columns. This is useful when
  rollup is enabled, since it maximizes your space savings.
  * With [Kafka indexing](../development/extensions-core/kafka-ingestion.html), partitioning is based on Kafka
  partitions, and is not configurable through Druid. You can configure it on the Kafka side by using the partitioning
@@ -183,6 +207,9 @@ time. However, two data ingestion methods _can_ operate on different time ranges
 time. For example, you can do a batch backfill from Hadoop while also doing a real-time load from Kafka, so long as
 the backfill data and the real-time data do not need to be written to the same time partitions. (If they do, the
 real-time load will take priority.)
+
+For tips on how partitioning can affect performance and storage footprint, see the
+[schema design](schema-design.html#partitioning) page.
 
 ## Rollup
 
@@ -221,16 +248,16 @@ timestamp                 srcIP         dstIP          packets     bytes
 2018-01-02T21:35:00Z      7.7.7.7       8.8.8.8            300      3000
 ```
 
-Druid can roll up data as it is ingested to minimize the amount of raw data that needs to be stored.
-In practice, we see that rolling up data can dramatically reduce the size of data that needs to be stored (up to a factor of 100).
-This storage reduction does come at a cost: as we roll up data, we lose the ability to query individual events. 
-
 The rollup granularity is the minimum granularity you will be able to explore data at and events are floored to this granularity. 
 Hence, Druid ingestion specs define this granularity as the `queryGranularity` of the data. The lowest supported `queryGranularity` is millisecond.
 
 The following links may be helpful in further understanding dimensions and metrics:
-* https://en.wikipedia.org/wiki/Dimension_(data_warehouse)
-* https://en.wikipedia.org/wiki/Measure_(data_warehouse))
+
+* [https://en.wikipedia.org/wiki/Dimension_(data_warehouse)](https://en.wikipedia.org/wiki/Dimension_(data_warehouse))
+
+* [https://en.wikipedia.org/wiki/Measure_(data_warehouse)](https://en.wikipedia.org/wiki/Measure_(data_warehouse))
+
+For tips on how to use rollup in your Druid schema designs, see the [schema design](schema-design.html#rollup) page.
 
 ### Roll-up modes
 
@@ -264,9 +291,9 @@ For compaction documentation, please see [tasks](../ingestion/tasks.html).
 
 Druid supports retention rules, which are used to define intervals of time where data should be preserved, and intervals where data should be discarded.
 
-Druid also supports separating historical nodes into tiers, and the retention rules can be configured to assign data for specific intervals to specific tiers.
+Druid also supports separating Historical nodes into tiers, and the retention rules can be configured to assign data for specific intervals to specific tiers.
 
-These features are useful for performance/cost management; a common use case is separating historical nodes into a "hot" tier and a "cold" tier.
+These features are useful for performance/cost management; a common use case is separating Historical nodes into a "hot" tier and a "cold" tier.
 
 For more information, please see [Load rules](../operations/rule-configuration.html).
 

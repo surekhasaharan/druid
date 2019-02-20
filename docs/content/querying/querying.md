@@ -1,13 +1,33 @@
 ---
 layout: doc_page
+title: "Querying"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Querying
 
 Queries are made using an HTTP REST style request to queryable nodes ([Broker](../design/broker.html),
 [Historical](../design/historical.html). [Peons](../design/peons.html)) that are running stream ingestion tasks can also accept queries. The
 query is expressed in JSON and each of these node types expose the same
-REST query interface. For normal Druid operations, queries should be issued to the broker nodes. Queries can be posted
+REST query interface. For normal Druid operations, queries should be issued to the Broker nodes. Queries can be posted
 to the queryable nodes like this -
 
  ```bash
@@ -20,7 +40,7 @@ Druid's native query language is JSON over HTTP, although many members of the co
 The Content-Type/Accept Headers can also take 'application/x-jackson-smile'.
 
  ```bash
- curl -X POST '<queryable_host>:<port>/druid/v2/?pretty' -H 'Content-Type:application/json' -H 'Accept:x-jackson-smile' -d @<query_json_file>
+ curl -X POST '<queryable_host>:<port>/druid/v2/?pretty' -H 'Content-Type:application/json' -H 'Accept:application/x-jackson-smile' -d @<query_json_file>
  ```
 
 Note: If Accept header is not provided, it defaults to value of 'Content-Type' header.
@@ -59,7 +79,7 @@ Where possible, we recommend using [Timeseries]() and [TopN]() queries instead o
 
 Queries can be cancelled explicitly using their unique identifier.  If the
 query identifier is set at the time of query, or is otherwise known, the following
-endpoint can be used on the broker or router to cancel the query.
+endpoint can be used on the Broker or Router to cancel the query.
 
 ```sh
 DELETE /druid/v2/{queryId}

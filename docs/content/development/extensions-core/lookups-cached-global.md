@@ -1,6 +1,26 @@
 ---
 layout: doc_page
+title: "Globally Cached Lookups"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Globally Cached Lookups
 
@@ -75,7 +95,7 @@ The parameters are as follows
 
 If `firstCacheTimeout` is set to a non-zero value, it should be less than `druid.manager.lookups.hostUpdateTimeout`. If `firstCacheTimeout` is NOT set, then management is essentially asynchronous and does not know if a lookup succeeded or failed in starting. In such a case logs from the lookup nodes should be monitored for repeated failures.
 
-Proper functionality of globally cached lookups requires the following extension to be loaded on the broker, peon, and historical nodes:
+Proper functionality of globally cached lookups requires the following extension to be loaded on the Broker, Peon, and Historical nodes:
 `druid-lookups-cached-global`
 
 ## Example configuration
@@ -111,7 +131,7 @@ In a simple case where only one [tier](../../querying/lookups.html#dynamic-confi
 }
 ```
 
-Where the coordinator endpoint `/druid/coordinator/v1/lookups/realtime_customer2/country_code` should return
+Where the Coordinator endpoint `/druid/coordinator/v1/lookups/realtime_customer2/country_code` should return
 
 ```json
 {
@@ -140,8 +160,8 @@ Where the coordinator endpoint `/druid/coordinator/v1/lookups/realtime_customer2
 
 ## Cache Settings
 
-Lookups are cached locally on historical nodes. The following are settings used by the nodes which service queries when 
-setting namespaces (broker, peon, historical)
+Lookups are cached locally on Historical nodes. The following are settings used by the nodes which service queries when 
+setting namespaces (Broker, Peon, Historical)
 
 |Property|Description|Default|
 |--------|-----------|-------|

@@ -1,6 +1,27 @@
 ---
 layout: doc_page
+title: "Query Caching"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 # Query Caching
 
 Druid supports query result caching through an LRU cache. Results are stored as a whole or either on a per segment basis along with the 
@@ -13,7 +34,7 @@ can be enabled at either the Historical and Broker level (it is not recommended 
 
 ## Query caching on Brokers
 
-Enabling caching on the broker can yield faster results than if query caches were enabled on Historicals for small clusters. This is 
+Enabling caching on the Broker can yield faster results than if query caches were enabled on Historicals for small clusters. This is 
 the recommended setup for smaller production clusters (< 20 servers). Take note that when caching is enabled on the Broker, 
 results from Historicals are returned on a per segment basis, and Historicals will not be able to do any local result merging.
 Result level caching is enabled only on the Broker side.

@@ -1,6 +1,26 @@
 ---
 layout: doc_page
+title: "Tutorial: Loading a file"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Tutorial: Loading a file
 
@@ -14,7 +34,7 @@ don't need to have loaded any data yet.
 
 ## Preparing the data and the ingestion task spec
 
-A data load is initiated by submitting an *ingestion task* spec to the Druid overlord. For this tutorial, we'll be loading the sample Wikipedia page edits data.
+A data load is initiated by submitting an *ingestion task* spec to the Druid Overlord. For this tutorial, we'll be loading the sample Wikipedia page edits data.
 
 The Druid package includes the following sample native batch ingestion task spec at `quickstart/tutorial/wikipedia-index.json`, shown here for convenience,
 which has been configured to read the `quickstart/tutorial/wikiticker-2015-09-12-sampled.json.gz` input file:
@@ -78,7 +98,7 @@ which has been configured to read the `quickstart/tutorial/wikiticker-2015-09-12
     },
     "tuningConfig" : {
       "type" : "index",
-      "targetPartitionSize" : 5000000,
+      "maxRowsPerSegment" : 5000000,
       "maxRowsInMemory" : 25000,
       "forceExtendableShardSpecs" : true
     }
@@ -97,7 +117,7 @@ a task that loads the `wikiticker-2015-09-12-sampled.json.gz` file included in t
 
 For convenience, the Druid package includes a batch ingestion helper script at `bin/post-index-task`.
 
-This script will POST an ingestion task to the Druid overlord and poll Druid until the data is available for querying.
+This script will POST an ingestion task to the Druid Overlord and poll Druid until the data is available for querying.
 
 Run the following command from Druid package root:
 
@@ -143,13 +163,13 @@ Which will print the ID of the task if the submission was successful:
 {"task":"index_wikipedia_2018-06-09T21:30:32.802Z"}
 ```
 
-To view the status of the ingestion task, go to the overlord console:
+To view the status of the ingestion task, go to the Overlord console:
 [http://localhost:8090/console.html](http://localhost:8090/console.html). You can refresh the console periodically, and after
 the task is successful, you should see a "SUCCESS" status for the task.
 
-After the ingestion task finishes, the data will be loaded by historical nodes and available for
+After the ingestion task finishes, the data will be loaded by Historical nodes and available for
 querying within a minute or two. You can monitor the progress of loading the data in the
-coordinator console, by checking whether there is a datasource "wikipedia" with a blue circle
+Coordinator console, by checking whether there is a datasource "wikipedia" with a blue circle
 indicating "fully available": [http://localhost:8081/#/](http://localhost:8081/#/).
 
 ![Coordinator console](../tutorials/img/tutorial-batch-01.png "Wikipedia 100% loaded")

@@ -1,11 +1,33 @@
 ---
 layout: doc_page
+title: "Hadoop-based Batch Ingestion"
 ---
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 # Hadoop-based Batch Ingestion
 
 Hadoop-based batch ingestion in Druid is supported via a Hadoop-ingestion task. These tasks can be posted to a running
-instance of a Druid [overlord](../design/overlord.html). 
+instance of a Druid [Overlord](../design/overlord.html).
+
+Please check [Hadoop-based Batch Ingestion VS Native Batch Ingestion](./hadoop-vs-native-batch.html) for differences between native batch ingestion and Hadoop-based ingestion.
 
 ## Command Line Hadoop Indexer
 
@@ -85,7 +107,7 @@ A sample task is shown below:
 |type|The task type, this should always be "index_hadoop".|yes|
 |spec|A Hadoop Index Spec. See [Ingestion](../ingestion/ingestion-spec.html)|yes|
 |hadoopDependencyCoordinates|A JSON array of Hadoop dependency coordinates that Druid will use, this property will override the default Hadoop coordinates. Once specified, Druid will look for those Hadoop dependencies from the location specified by `druid.extensions.hadoopDependenciesDir`|no|
-|classpathPrefix|Classpath that will be pre-appended for the peon process.|no|
+|classpathPrefix|Classpath that will be pre-appended for the Peon process.|no|
 
 also note that, druid automatically computes the classpath for hadoop job containers that run in hadoop cluster. But, in case of conflicts between hadoop and druid's dependencies, you can manually specify the classpath by setting `druid.extensions.hadoopContainerDruidClasspath` property. See the extensions config in [base druid configuration](../configuration/index.html#extensions).
 
@@ -101,7 +123,7 @@ This field is required.
 |-----|----|-----------|--------|
 |type|String|This should always be 'hadoop'.|yes|
 |inputSpec|Object|A specification of where to pull the data in from. See below.|yes|
-|segmentOutputPath|String|The path to dump segments into.|yes|
+|segmentOutputPath|String|The path to dump segments into.|Only used by the [CLI Hadoop Indexer](../ingestion/command-line-hadoop-indexer.html). This field must be null otherwise.|
 |metadataUpdateSpec|Object|A specification of how to update the metadata for the druid cluster these segments belong to.|Only used by the [CLI Hadoop Indexer](../ingestion/command-line-hadoop-indexer.html). This field must be null otherwise.|
 
 ### InputSpec specification
@@ -339,4 +361,3 @@ Druid works out of the box with many Hadoop distributions.
 If you are having dependency conflicts between Druid and your version of Hadoop, you can try
 searching for a solution in the [Druid user groups](https://groups.google.com/forum/#!forum/druid-
 user), or reading the Druid [Different Hadoop Versions](../operations/other-hadoop.html) documentation.
-
