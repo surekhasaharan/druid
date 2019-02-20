@@ -31,7 +31,6 @@ import org.apache.druid.guice.LazySingleton;
 import org.apache.druid.guice.PolyBind;
 import org.apache.druid.initialization.DruidModule;
 import org.apache.druid.query.lookup.NamespaceLookupExtractorFactory;
-import org.apache.druid.query.lookup.PaldbLookupExtractorFactory;
 import org.apache.druid.query.lookup.namespace.CacheGenerator;
 import org.apache.druid.query.lookup.namespace.ExtractionNamespace;
 import org.apache.druid.query.lookup.namespace.JdbcExtractionNamespace;
@@ -57,7 +56,7 @@ public class NamespaceExtractionModule implements DruidModule
         new SimpleModule("DruidNamespacedCachedExtractionModule")
             .registerSubtypes(
                 NamespaceLookupExtractorFactory.class
-            ).registerSubtypes(PaldbLookupExtractorFactory.class)
+            )
     );
   }
 

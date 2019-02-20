@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.druid.benchmark.query.lookup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,6 +79,7 @@ import org.apache.druid.segment.column.ColumnConfig;
 import org.apache.druid.segment.incremental.IncrementalIndex;
 import org.apache.druid.segment.serde.ComplexMetrics;
 import org.apache.druid.segment.writeout.OffHeapMemorySegmentWriteOutMediumFactory;
+import org.apache.druid.timeline.SegmentId;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -396,7 +398,7 @@ public class TopnLookupBenchmark
         ),
         new TopNQueryQueryToolChest(
             new TopNQueryConfig(),
-            QueryBenchmarkUtil.NoopIntervalChunkingQueryRunnerDecorator()
+            QueryBenchmarkUtil.noopIntervalChunkingQueryRunnerDecorator()
         ),
         QueryBenchmarkUtil.NOOP_QUERYWATCHER
     );
@@ -440,8 +442,8 @@ public class TopnLookupBenchmark
   {
     QueryRunner<Result<TopNResultValue>> runner = QueryBenchmarkUtil.makeQueryRunner(
         factory,
-        "incIndex",
-        new IncrementalIndexSegment(incIndexes.get(0), "incIndex")
+        SegmentId.dummy("incIndex"),
+        new IncrementalIndexSegment(incIndexes.get(0), SegmentId.dummy("incIndex"))
     );
 
     List<Result<TopNResultValue>> results = runQuery(factory, runner, query);
@@ -457,8 +459,8 @@ public class TopnLookupBenchmark
   {
     final QueryRunner<Result<TopNResultValue>> runner = QueryBenchmarkUtil.makeQueryRunner(
         factory,
-        "qIndex",
-        new QueryableIndexSegment("qIndex", qIndexes.get(0))
+        SegmentId.dummy("qIndex"),
+        new QueryableIndexSegment(qIndexes.get(0), SegmentId.dummy("qIndex"))
     );
 
     List<Result<TopNResultValue>> results = runQuery(factory, runner, query);
@@ -478,8 +480,8 @@ public class TopnLookupBenchmark
       String segmentName = "qIndex" + i;
       QueryRunner<Result<TopNResultValue>> runner = QueryBenchmarkUtil.makeQueryRunner(
           factory,
-          segmentName,
-          new QueryableIndexSegment(segmentName, qIndexes.get(i))
+          SegmentId.dummy(segmentName),
+          new QueryableIndexSegment(qIndexes.get(i), SegmentId.dummy(segmentName))
       );
       singleSegmentRunners.add(toolChest.preMergeQueryDecoration(runner));
     }
@@ -514,3 +516,4 @@ public class TopnLookupBenchmark
     new Runner(opt).run();
   }
 }
+

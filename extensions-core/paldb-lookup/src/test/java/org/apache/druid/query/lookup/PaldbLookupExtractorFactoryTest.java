@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.druid.query.lookup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,8 +82,6 @@ public class PaldbLookupExtractorFactoryTest
       final LookupIntrospectHandler handler = lookupExtractorFactory.getIntrospectHandler();
       Assert.assertNotNull(handler);
       final Class<? extends LookupIntrospectHandler> clazz = handler.getClass();
-
-      Assert.assertNotNull(clazz.getMethod("getVersion").invoke(handler));
       Assert.assertNotNull(clazz.getMethod("getVersion").invoke(handler));
       //Assert.assertEquals(ImmutableSet.of("foo"), ((Response) clazz.getMethod("getKeys").invoke(handler)).getEntity());
     }
@@ -125,3 +124,5 @@ public class PaldbLookupExtractorFactoryTest
   }
 
 }
+
+

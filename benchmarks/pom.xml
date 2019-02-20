@@ -68,6 +68,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.druid.extensions</groupId>
+      <artifactId>paldb-lookup</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.druid.extensions</groupId>
       <artifactId>druid-datasketches</artifactId>
       <version>${project.parent.version}</version>
       <type>test-jar</type>
@@ -111,9 +116,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.druid.extensions</groupId>
-      <artifactId>druid-lookups-cached-global</artifactId>
-      <version>0.13.0-incubating-SNAPSHOT</version>
+      <groupId>com.linkedin.paldb</groupId>
+      <artifactId>paldb</artifactId>
+      <version>1.2.0</version>
     </dependency>
   </dependencies>
 
