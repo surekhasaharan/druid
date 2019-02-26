@@ -45,8 +45,9 @@ public class PaldbLookupExtractorFactoryTest
   public static void setUpClass()
   {
     StoreWriter writer = PalDB.createWriter(new File("store.paldb"));
-    writer.put("foo", "bar");
-    writer.put("foo1", "baz");
+    writer.put("foo", new String[]{"bar"});
+    writer.put("foo1", new String[]{"baz"});
+    writer.put("bat", new String[]{"abc", "xyz"});
     writer.close();
     jsonMapper.registerSubtypes(PaldbLookupExtractorFactory.class);
   }
@@ -113,9 +114,21 @@ public class PaldbLookupExtractorFactoryTest
   }
 
   @Test
+  public void testArrayValues()
+  {
+    final LookupExtractorFactory factory = new PaldbLookupExtractorFactory("store.paldb", 1);
+    Assert.assertTrue(factory instanceof PaldbLookupExtractorFactory);
+    LookupExtractor lookupExtractor = factory.get();
+    List<String> keys = ImmutableList.of("bat");
+    Map<String, String> values = lookupExtractor.applyAll(keys);
+    Map<String, String> map = ImmutableMap.of("bat", "xyz");
+    Assert.assertEquals(map, values);
+  }
+
+  @Test
   public void testConfig() throws IOException
   {
-    final LookupExtractorFactory factory = new PaldbLookupExtractorFactory("store.paldb");
+    final LookupExtractorFactory factory = new PaldbLookupExtractorFactory("store.paldb", 0);
     container = new LookupExtractorFactoryContainer("v0", factory);
     Assert.assertTrue(factory instanceof PaldbLookupExtractorFactory);
     final PaldbLookupExtractorFactory lookupFactory = (PaldbLookupExtractorFactory) factory;

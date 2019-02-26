@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.linkedin.paldb.api.StoreReader;
 import org.apache.druid.common.config.NullHandling;
+import org.apache.druid.java.util.common.logger.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -36,14 +37,19 @@ import java.util.stream.StreamSupport;
 public class PaldbLookupExtractor extends LookupExtractor
 {
 
+  private static final Logger LOG = new Logger(PaldbLookupExtractor.class);
+
   private final StoreReader reader;
+  private final int index;
 
   @JsonCreator
   public PaldbLookupExtractor(
-      @JsonProperty("reader") StoreReader reader
+      @JsonProperty("reader") StoreReader reader,
+      @JsonProperty("index") int index
   )
   {
     this.reader = reader;
+    this.index = index;
   }
 
   @JsonProperty
@@ -60,7 +66,23 @@ public class PaldbLookupExtractor extends LookupExtractor
     if (keyEquivalent == null) {
       return null;
     }
-    return NullHandling.emptyToNullIfNeeded(reader.get(keyEquivalent));
+    final String[] arr = reader.get(keyEquivalent);
+    if (arr == null) {
+      LOG.warn("value array is null for key  " + keyEquivalent);
+      return null;
+    }
+    int len = arr.length;
+    if (index >= len) {
+      throw new ArrayIndexOutOfBoundsException("passed index ["
+                                               + index
+                                               + "] is greater than or equal to array length ["
+                                               + len
+                                               + "] for key ["
+                                               + keyEquivalent
+                                               + "]");
+    }
+    final String str = arr[index];
+    return NullHandling.emptyToNullIfNeeded(str);
   }
 
   @Override

@@ -28,6 +28,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class PaldbLookupIntrospectHandler implements LookupIntrospectHandler
 {
@@ -51,11 +54,17 @@ public class PaldbLookupIntrospectHandler implements LookupIntrospectHandler
   @GET
   @Path("/values")
   @Produces(MediaType.APPLICATION_JSON)
-  //todo FixMe extract value from entry
   public Response getValues()
   {
     StoreReader reader = ((PaldbLookupExtractor) factory.get()).getReader();
-    return Response.ok(reader.iterable()).build();
+    final int index = factory.getIndex();
+    Iterator<Object> keys = reader.keys().iterator();
+    List<Object> vals = new ArrayList<>();
+    while (keys.hasNext()) {
+      final Object obj = reader.getArray(keys.next())[index];
+      vals.add(obj);
+    }
+    return Response.ok(vals).build();
   }
 
   @GET

@@ -41,6 +41,8 @@ public class PaldbLookupExtractorFactory implements LookupExtractorFactory
   private final String extractorID;
   @JsonProperty
   private final String filepath;
+  @JsonProperty
+  private final int index;
   private final LookupIntrospectHandler lookupIntrospectHandler;
   private final StoreReader reader;
   private static final byte[] CLASS_CACHE_KEY;
@@ -52,12 +54,16 @@ public class PaldbLookupExtractorFactory implements LookupExtractorFactory
 
   @JsonCreator
   public PaldbLookupExtractorFactory(
-      @JsonProperty("filepath") String filepath
+      @JsonProperty("filepath") String filepath,
+      @JsonProperty("index") int index
   )
   {
     this.filepath = Preconditions.checkNotNull(filepath, "filepath cannot be null");
+    this.index = index;
     this.extractorID = StringUtils.format("paldb-factory-%s", UUID.randomUUID().toString());
     this.lookupIntrospectHandler = new PaldbLookupIntrospectHandler(this);
+    //Configuration c = PalDB.newConfiguration();
+    //c.set(Configuration.CACHE_ENABLED, "true");
     reader = PalDB.createReader(new File(filepath));
   }
 
@@ -66,6 +72,11 @@ public class PaldbLookupExtractorFactory implements LookupExtractorFactory
   public String getFilepath()
   {
     return filepath;
+  }
+
+  public int getIndex()
+  {
+    return index;
   }
 
   @Override
@@ -98,7 +109,7 @@ public class PaldbLookupExtractorFactory implements LookupExtractorFactory
   @Override
   public LookupExtractor get()
   {
-    return new PaldbLookupExtractor(reader)
+    return new PaldbLookupExtractor(reader, index)
     {
       @Override
       public byte[] getCacheKey()

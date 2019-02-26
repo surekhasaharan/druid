@@ -190,7 +190,7 @@ public class TopnLookupBenchmark
     }
 
     reader = PalDB.createReader(new File("lookup.paldb"));
-    LookupExtractor paldbExtractor = new PaldbLookupExtractor(reader);
+    LookupExtractor paldbExtractor = new PaldbLookupExtractor(reader, 0);
     LookupExtractor mapExtractor = new MapLookupExtractor(stringMap, false);
 
 
